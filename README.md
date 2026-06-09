@@ -23,8 +23,6 @@ The source font file is never opened, read, or parsed by anything except the sys
 
 Counters (the holes in `O`, `A`, `@`, …) must wind opposite to their enclosing outer contour for CFF's non-zero fill rule. If skia-pathops is installed, it is used to resolve overlaps and fix winding from an even-odd source. Otherwise, a built-in fallback (nesting-depth + signed-area + contour reversal) handles it.
 
----
-
 ## Output and limitations
 
 * The output quality generally isn't very good. This is more of a fun legal exercise than a practical tool.
@@ -33,8 +31,6 @@ Counters (the holes in `O`, `A`, `@`, …) must wind opposite to their enclosing
 * No kerning, ligatures, OpenType features, or hinting are reproduced.
 * The `H<c>H` advance heuristic can absorb a font's contextual kerning into the advance for a few glyphs (e.g. after `T`); usually negligible.
 * Coverage is whatever the *renderer* draws for a codepoint, including any font fallback the system performs for characters the font lacks.
-
----
 
 ## Legal analysis
 
