@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2026 robinpie <robin413@protonmail.com>
 #
-# fontliberator.pl — black-box font tracer
+# fontliberator.pl -- black-box font tracer
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #
 # The source font file is NEVER parsed or read by this program. We treat the
 # system renderer as an opaque black box: characters go in, pixels come out.
-# That is the whole point — outlines are re-derived from rendered pixels, not
+# That is the whole point -- outlines are re-derived from rendered pixels, not
 # copied from the source font's own Bezier data.
 #
 # Pipeline per glyph:
@@ -679,7 +679,7 @@ sub vsay { print STDERR "@_\n" if $opt{verbose}; }
 sub usage {
     my ($code) = @_;
     print STDERR <<'USAGE';
-fontliberator.pl — black-box font tracer
+fontliberator.pl -- black-box font tracer
 
 Renders a font with the system text renderer, autotraces the pixels with
 potrace, and rebuilds the outlines into a new .otf. The source font file is
@@ -692,7 +692,7 @@ REQUIRED:
   -f, --font <name|path>   System font name (resolved by ImageMagick) or a
                            path to a .ttf/.otf. Used ONLY as input to the
                            renderer; the file is never parsed by this tool.
-  -n, --family <name>      Family name for the NEW font (use your own — the
+  -n, --family <name>      Family name for the NEW font (use your own -- the
                            original name is almost certainly a trademark).
   -o, --output <path>      Output .otf path.
 
