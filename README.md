@@ -48,7 +48,7 @@ Unambiguously, we can legally reproduce a *typeface*, but not the *font*. We acc
 
 This tool is a clean-room reimplementor in the classic sense. It never reads the source font at all. It only observes the output of the system renderer (pixels) and independently derives new Bézier curves from those pixels. The new file shares no coordinate data, no program code, and no table structure with the original. It is a fresh expression of an unprotectable design. Under the US framework above, that is the part that keeps clear of the font file's software copyright.
 
-This mirrors how *Sega v. Accolade* (9th Cir. 1992) and *Sony v. Connectix* (9th Cir. 2000) treated clean-room/observational reimplementation; studying externally observable behavior to build an independent, non-copying implementation is generally permissible.
+This mirrors typical clean-room/observational reimplementation practice (like the Phoenix BIOS reimplementation); studying externally observable behavior to build an independent, non-copying implementation is generally permissible.
 
 ### The copyright status of the outputted `.otf`
 
