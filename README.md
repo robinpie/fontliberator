@@ -1,4 +1,4 @@
-Under US law, typefaces are not eligible for protection under US copyright law, although the software used to implement it (even just a ttf or otf) is.
+Under US copyright law, typefaces are not eligible for protection, although the software used to implement it (even just a ttf or otf) is.
 
 Thus, to liberate typefaces from the font implementation: **fontliberator** is a tool that automatically clean-rooom reverse-engineers fonts. It renders each glyph of a source font using only the system text renderer as a black-box oracle, autotraces the resulting pixels, and reassembles the outlines into a brand-new `.otf`.
 
