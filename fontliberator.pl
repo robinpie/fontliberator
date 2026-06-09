@@ -45,6 +45,7 @@ my %opt = (
     alphamax   => 1.0,     # potrace: corner threshold
     opttolerance => 0.2,   # potrace: curve optimization tolerance
     keep       => 0,       # keep the temp working dir for inspection
+    preview    => 0,       # render an original-vs-liberated comparison image
     verbose    => 0,
     help       => 0,
 );
@@ -61,6 +62,7 @@ GetOptions(
     'alphamax=f'    => \$opt{alphamax},
     'opttolerance=f'=> \$opt{opttolerance},
     'keep'          => \$opt{keep},
+    'preview'       => \$opt{preview},
     'verbose|v'     => \$opt{verbose},
     'help|h'        => \$opt{help},
 ) or usage(1);
@@ -198,6 +200,9 @@ print "wrote $opt{output}\n";
 print "  family : $opt{family} $opt{style}\n";
 print "  glyphs : ", scalar(@chars), " (+ .notdef)\n";
 print "  source : $opt{font} (rendered black-box; never parsed)\n";
+
+make_preview(\@chars) if $opt{preview};
+
 exit 0;
 
 # ============================================================================
@@ -497,6 +502,115 @@ sub parse_path_d {
 }
 
 # ----------------------------------------------------------------------------
+# Preview: render the same characters with the original font and the freshly
+# built one, stacked for comparison. Saved next to the output; also shown
+# inline via sixel if the terminal supports it.
+# ----------------------------------------------------------------------------
+
+sub make_preview {
+    my ($chars) = @_;
+
+    # Sample text = the characters we actually traced (so every glyph exists
+    # in both fonts). Drop the space at the very front so caption doesn't eat
+    # leading whitespace; spacing is still exercised mid-string.
+    my $sample = join '', @$chars;
+    $sample =~ s/^\s+//;
+
+    my $W  = 1000;
+    my $pt = 40;
+
+    my $top   = File::Spec->catfile($work, 'prev_top.png');
+    my $bot   = File::Spec->catfile($work, 'prev_bot.png');
+    my $ltop  = File::Spec->catfile($work, 'prev_ltop.png');
+    my $lbot  = File::Spec->catfile($work, 'prev_lbot.png');
+
+    render_caption_block($RENDER_FONT,   $sample, $pt, $W, $top);
+    render_caption_block($opt{output},   $sample, $pt, $W, $bot);
+    render_label_block("original  ($opt{font})", $W, $ltop);
+    render_label_block("liberated  ($opt{family} $opt{style})", $W, $lbot);
+
+    my $prev = $opt{output};
+    $prev =~ s/\.otf$//i;
+    $prev .= '.preview.png';
+
+    run($MAGICK, $ltop, $top, $lbot, $bot,
+        '-background', 'white', '-append',
+        '-bordercolor', 'white', '-border', '12',
+        '-bordercolor', '#cccccc', '-border', '1',
+        $prev);
+    print "  preview: $prev\n";
+
+    if (terminal_supports_sixel()) {
+        # Scale to a terminal-friendly size and write sixel to stdout.
+        my $rc = system { $MAGICK } $MAGICK, $prev, '-resize', '900x>', 'sixel:-';
+        print STDERR "warning: sixel display failed\n" if $rc != 0;
+    } else {
+        vsay("terminal does not advertise sixel; preview saved to file only");
+    }
+}
+
+sub render_caption_block {
+    my ($font, $text, $pt, $width, $out) = @_;
+    run($MAGICK,
+        '-background', 'white', '-fill', 'black',
+        '-font', $font, '-pointsize', $pt,
+        '-size', "${width}x",
+        'caption:' . escape_annot($text),
+        $out);
+}
+
+sub render_label_block {
+    my ($text, $width, $out) = @_;
+    run($MAGICK,
+        '-background', '#f0f0f0', '-fill', '#444444',
+        '-pointsize', 16, '-gravity', 'West',
+        '-size', "${width}x26",
+        'caption:' . escape_annot($text),
+        $out);
+}
+
+# Detect sixel support by sending a Primary Device Attributes request (ESC [ c)
+# and checking whether the terminal lists attribute "4" (sixel graphics).
+sub terminal_supports_sixel {
+    return 0 unless -t STDOUT;
+    return 0 unless open(my $tty, '+<', '/dev/tty');
+
+    my $old = `stty -g </dev/tty 2>/dev/null`;
+    chomp $old;
+    return 0 unless length $old;
+
+    # Non-canonical, no echo so the reply doesn't print and we can read it raw.
+    system("stty -echo -icanon min 0 time 0 </dev/tty 2>/dev/null");
+
+    syswrite($tty, "\e[c");
+
+    my $resp = '';
+    for (1 .. 4) {                       # poll up to ~0.8s total
+        my $rin = '';
+        vec($rin, fileno($tty), 1) = 1;
+        my $n = select(my $rout = $rin, undef, undef, 0.2);
+        if (defined $n && $n > 0) {
+            my $buf = '';
+            my $got = sysread($tty, $buf, 256);
+            last unless $got;
+            $resp .= $buf;
+            last if $resp =~ /c/;        # DA reply terminates with 'c'
+        } elsif (length $resp) {
+            last;
+        }
+    }
+
+    system("stty $old </dev/tty 2>/dev/null");
+    close $tty;
+
+    # Reply looks like: ESC [ ? 64 ; 1 ; 2 ; 4 ; ... c   -- "4" == sixel
+    if ($resp =~ /\e\[\?([0-9;]+)c/) {
+        return 1 if grep { $_ eq '4' } split /;/, $1;
+    }
+    return 0;
+}
+
+# ----------------------------------------------------------------------------
 # Helpers
 # ----------------------------------------------------------------------------
 
@@ -575,6 +689,9 @@ OPTIONS:
       --alphamax <f>       potrace corner threshold (default: 1.0).
       --opttolerance <f>   potrace curve optimization (default: 0.2).
       --keep               Keep the temp working dir (bitmaps, SVGs, JSON).
+      --preview            Render an original-vs-liberated comparison image
+                           next to the output; display it inline via sixel if
+                           the terminal supports sixel graphics.
   -v, --verbose            Verbose progress.
   -h, --help               This help.
 
