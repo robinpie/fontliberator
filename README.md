@@ -4,6 +4,8 @@ Thus, to liberate typefaces from the font implementation: **fontliberator** is a
 
 The source font file is never opened, read, or parsed by anything except the system font renderer, which is only touched as a black box (the font goes in, and rasterized pixels come out). Every outline in the output is independently derived from rendered pixels. Obviously, we don't use the original font's Bézier data, metric tables, or hinting program.
 
+[!screenshot.png]
+
 
 ## How it works
 
