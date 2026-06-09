@@ -19,7 +19,7 @@ The source font file is never opened, read, or parsed by anything except the sys
 
 ### Contour winding
 
-Counters (the holes in `O`, `A`, `@`, …) must wind opposite to their enclosing outer contour for CFF's non-zero fill rule. If [`skia-pathops`](https://github.com/fonttools/skia-pathops) is installed, it is used to resolve overlaps and fix winding from an even-odd source. Otherwise, a built-in fallback (nesting-depth + signed-area + contour reversal) handles it with no extra dependency.
+Counters (the holes in `O`, `A`, `@`, …) must wind opposite to their enclosing outer contour for CFF's non-zero fill rule. If skia-pathops is installed, it is used to resolve overlaps and fix winding from an even-odd source. Otherwise, a built-in fallback (nesting-depth + signed-area + contour reversal) handles it.
 
 ---
 
