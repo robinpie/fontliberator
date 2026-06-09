@@ -98,7 +98,7 @@ Options:
 
 ## Dependencies
 
-This is a single Perl script. It shells out to a few external tools.
+This script shells out to a few external tools.
 
 ### Required
 
