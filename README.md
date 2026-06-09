@@ -100,7 +100,7 @@ Options:
 
 ## Dependencies
 
-This is a single self-contained Perl script. It shells out to a few external tools.
+This is a single Perl script. It shells out to a few external tools.
 
 ### Required
 
