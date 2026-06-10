@@ -108,6 +108,7 @@ This script shells out to a few external tools.
 * python3
 * fonttools
 * fontconfig
+* a system font renderer that imagemagick likes (FreeType, Core Text, and DirectWrite should all be fine)
 
 ### Optional
 
