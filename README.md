@@ -115,4 +115,4 @@ This script shells out to a few external tools.
 
 ---
 
-The script itself is licensed under the GNU General Public License v3.0. See the LICENSE file for details, and see the *Legal analysis* section for details of the outputs.
+The script itself is licensed under the GNU General Public License v2. See the LICENSE file for details, and see the *Legal analysis* section for details of the outputs.
