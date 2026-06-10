@@ -25,9 +25,8 @@ Counters (the holes in `O`, `A`, `@`, …) must wind opposite to their enclosing
 
 ## Output and limitations
 
-* The output quality generally isn't very good. This is more of a fun legal exercise than a practical tool.
 * Produces a single-master, monochrome CFF `.otf` covering the requested characters plus `.notdef`.
-* It bakes in whatever hinting and grid-fitting the renderer applied at the chosen point size. Likely not a pixel-perfect metric clone of the original.
+* It bakes in whatever hinting and grid-fitting the renderer applied at the chosen point size. May not be a pixel-perfect metric clone of the original, though will be very close.
 * No kerning, ligatures, OpenType features, or hinting are reproduced.
 * The `H<c>H` advance heuristic can absorb a font's contextual kerning into the advance for a few glyphs (e.g. after `T`); usually negligible.
 * Coverage is whatever the *renderer* draws for a codepoint, including any font fallback the system performs for characters the font lacks.
